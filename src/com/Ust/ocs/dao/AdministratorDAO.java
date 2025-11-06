@@ -31,11 +31,27 @@ public class AdministratorDAO implements Administrator{
         return "Doctor added successfully!";
     }
 	
-	@Override
-	public Boolean modifyDoctor(DoctorBean doctorBean) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Boolean modifyDoctor(DoctorBean doctorBean) {
+        // Loop through the list to find the doctor by ID
+        for (int i = 0; i < doctorList.size(); i++) {
+            DoctorBean existingDoctor = doctorList.get(i);
+            
+            // Compare doctor IDs
+            if (existingDoctor.getDoctorID().equals(doctorBean.getDoctorID())) {
+                
+                // Replace the old doctor object with the new one
+                doctorList.set(i, doctorBean);
+                
+                System.out.println("Doctor details updated successfully for ID: " + doctorBean.getDoctorID());
+                return true;  // Success
+            }
+        }
+
+        // If doctor not found
+        System.out.println("Doctor not found for ID: " + doctorBean.getDoctorID());
+        return false;
+    }
 
 	
     public ArrayList<DoctorBean> viewAllDoctors() {
@@ -44,11 +60,24 @@ public class AdministratorDAO implements Administrator{
     }
 
 
-	@Override
-	public int removeDoctor(String doctorID) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public int removeDoctor(String doctorID) {
+        // Loop through the doctor list
+        for (int i = 0; i < doctorList.size(); i++) {
+            DoctorBean doctor = doctorList.get(i);
+
+            // Check if this doctor's ID matches the one to remove
+            if (doctor.getDoctorID().equals(doctorID)) {
+                doctorList.remove(i); // Remove doctor
+                System.out.println("Doctor removed successfully: " + doctorID);
+                return 1; // Success
+            }
+        }
+
+        // If doctor not found
+        System.out.println("Doctor ID not found: " + doctorID);
+        return 0; // Failure
+    }
 	
 	@Override
 	public ArrayList<DoctorBean> suggestDoctors(String patientId, String date) {
