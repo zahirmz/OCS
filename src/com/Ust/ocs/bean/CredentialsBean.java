@@ -6,7 +6,7 @@ public class CredentialsBean {
     private String userType; 
     private int loginStatus; 
 
-    // Constructor accepting all fields
+    
     public CredentialsBean(String userId, String password, String userType, int loginStatus) {
         this.userId = userId;
         this.password = password;
@@ -14,7 +14,7 @@ public class CredentialsBean {
         this.loginStatus = loginStatus;
     }
 
-    // Getters and Setters
+   
     public String getUserId() {
         return userId;
     }
