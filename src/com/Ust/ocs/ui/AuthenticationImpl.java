@@ -1,17 +1,13 @@
 package com.Ust.ocs.ui;
-
 import com.Ust.ocs.bean.CredentialsBean;
 import com.Ust.ocs.util.Authentication;
 
 public class AuthenticationImpl implements Authentication {
-
     private static final CredentialsBean admin = new CredentialsBean("zahir", "zahir123", "Administrator", 0);
     private static final CredentialsBean reporter = new CredentialsBean("reporter", "reporter123", "Reporter", 0);
     private static final CredentialsBean patient = new CredentialsBean("patient", "patient123", "Patient", 0);
-
     @Override
     public boolean authenticate(CredentialsBean user) {
- 
         if (user.getUserId().equals(admin.getUserId()) && user.getPassword().equals(admin.getPassword())) {
             user.setLoginStatus(1);  
             user.setUserType(admin.getUserType());  
@@ -28,10 +24,8 @@ public class AuthenticationImpl implements Authentication {
             return false;
         }
     }
-
     @Override
-    public String authorize(String userId) {
-      
+    public String authorize(String userId) { 
         if (userId.equals(admin.getUserId())) {
             return admin.getUserType();
         } else if (userId.equals(reporter.getUserId())) {
@@ -42,10 +36,8 @@ public class AuthenticationImpl implements Authentication {
             return "Unknown"; 
         }
     }
-
     @Override
     public boolean changeLoginStatus(CredentialsBean user, int loginStatus) {
-       
         if (loginStatus == 0 || loginStatus == 1) {
             user.setLoginStatus(loginStatus);
             return true;
