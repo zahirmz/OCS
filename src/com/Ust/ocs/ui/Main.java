@@ -224,22 +224,22 @@
 //    }
 //}
 
-package com.Ust.ocs.ui;
-import java.sql.*;
-
-public class Main {
-	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		Class.forName("com.mysql.cj.jdbc.Driver");
-	Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/ustglobal","root","pass@word1");
-	System.out.println("Connected Successfully");
-	PreparedStatement ps =con.prepareStatement("Insert into employee values(?,?,?)");
-	ps.setInt(1, 101);
-	ps.setString(2, "Rahul");
-	ps.setInt(3, 30000);
-	int i=ps.executeUpdate();
-	System.out.println(i+" record inserted...");
-	
-	}
-}
+//package com.Ust.ocs.ui;
+//import java.sql.*;
+//
+//public class Main {
+//	public static void main(String[] args) throws ClassNotFoundException, SQLException {
+//		Class.forName("com.mysql.cj.jdbc.Driver");
+//	Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/ustglobal","root","pass@word1");
+//	System.out.println("Connected Successfully");
+//	PreparedStatement ps =con.prepareStatement("Insert into employee values(?,?,?)");
+//	ps.setInt(1, 101);
+//	ps.setString(2, "Rahul");
+//	ps.setInt(3, 30000);
+//	int i=ps.executeUpdate();
+//	System.out.println(i+" record inserted...");
+//	
+//	}
+//}
 
 

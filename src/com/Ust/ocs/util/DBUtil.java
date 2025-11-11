@@ -1,11 +1,15 @@
 package com.Ust.ocs.util;
 
-import com.sun.jdi.connect.spi.Connection;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public interface DBUtil {
-	public static Connection getDBConnection(String driverType) {
-		return null;
-	}
-	
-
+    static Connection getDBConnection() throws SQLException, ClassNotFoundException {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        String url = "jdbc:mysql://localhost:3306/cbh";
+        String username = "root";  // your MySQL username
+        String password = "pass@word1";  // your MySQL password
+        return DriverManager.getConnection(url, username, password);
+    }
 }

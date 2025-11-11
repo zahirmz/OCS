@@ -68,6 +68,7 @@ public class Call {
             System.out.println("2. Modify Doctor");
             System.out.println("3. View Doctors");
             System.out.println("4. Remove Doctor");
+            
             System.out.println("5. Exit");
             System.out.print("Enter your choice: ");
             int choice = sc.nextInt();
