@@ -75,37 +75,8 @@ public class AdministratorDAO implements Administrator {
     }
 
 
-    // ✅ Dynamic Field Update (for partial modification)
-//    @Override
-//    public Boolean modifyDoctor(String doctorID, Map<String, String> updatedFields) {
-//        if (updatedFields.isEmpty()) return false;
-//
-//        StringBuilder sql = new StringBuilder("UPDATE doctors SET ");
-//        int count = 0;
-//
-//        for (String field : updatedFields.keySet()) {
-//            sql.append(field).append("=?");
-//            if (++count < updatedFields.size()) sql.append(", ");
-//        }
-//        sql.append(" WHERE doctorID=?");
-//
-//        try (Connection con = DBUtil.getDBConnection();
-//             PreparedStatement ps = con.prepareStatement(sql.toString())) {
-//
-//            int index = 1;
-//            for (String field : updatedFields.keySet()) {
-//                ps.setString(index++, updatedFields.get(field));
-//            }
-//            ps.setString(index, doctorID);
-//
-//            int rows = ps.executeUpdate();
-//            return rows > 0;
-//
-//        } catch (SQLException | ClassNotFoundException e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
+    
+
 
     public ArrayList<DoctorBean> viewAllDoctors() {
         ArrayList<DoctorBean> doctorList = new ArrayList<>();
