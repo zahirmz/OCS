@@ -106,6 +106,22 @@ public class DoctorBean {
 	 public void setEmailID(String emailID) {
 		 this.emailID = emailID;
 	 }
+	 @Override
+	 public String toString() {
+		return "DoctorBean [doctorID=" + doctorID + ", doctorName=" + doctorName + ", dateOfBirth=" + dateOfBirth
+				+ ", dateOfJoining=" + dateOfJoining + ", gender=" + gender + ", qualification=" + qualification
+				+ ", specialization=" + specialization + ", yearsOfExperience=" + yearsOfExperience + ", street="
+				+ street + ", location=" + location + ", city=" + city + ", state=" + state + ", pincode=" + pincode
+				+ ", contactNumber=" + contactNumber + ", emailID=" + emailID + ", getDoctorID()=" + getDoctorID()
+				+ ", getDoctorName()=" + getDoctorName() + ", getDateOfBirth()=" + getDateOfBirth()
+				+ ", getDateOfJoining()=" + getDateOfJoining() + ", getGender()=" + getGender()
+				+ ", getQualification()=" + getQualification() + ", getSpecialization()=" + getSpecialization()
+				+ ", getYearsOfExperience()=" + getYearsOfExperience() + ", getStreet()=" + getStreet()
+				+ ", getLocation()=" + getLocation() + ", getCity()=" + getCity() + ", getState()=" + getState()
+				+ ", getPincode()=" + getPincode() + ", getContactNumber()=" + getContactNumber() + ", getEmailID()="
+				+ getEmailID() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()="
+				+ super.toString() + "]";
+	 }
 	 
 }
 

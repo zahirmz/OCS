@@ -15,7 +15,7 @@ public class AdministratorDAO implements Administrator {
     @Override
     public String addDoctor(DoctorBean doctorBean) {
         String sql = "INSERT INTO doctors VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection con = (Connection) DBUtil.getDBConnection();
+        try (Connection con = DBUtil.getDBConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, doctorBean.getDoctorID());
@@ -42,28 +42,28 @@ public class AdministratorDAO implements Administrator {
             return "⚠️ Error: " + e.getMessage();
         }
     }
-
+    
     @Override
-    public Boolean modifyDoctor(DoctorBean doctorBean) {
-        String sql = "UPDATE doctors SET doctorName=?, specialization=?, yearsOfExperience=?, dateOfBirth=?, dateOfJoining=?, gender=?, qualification=?, street=?, location=?, city=?, state=?, pincode=?, contactNumber=?, emailID=? WHERE doctorID=?";
-        try (Connection con = (Connection) DBUtil.getDBConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+    public Boolean modifyDoctor(String doctorID, Map<String, String> updatedFields) {
+        if (updatedFields.isEmpty()) return false;
 
-            ps.setString(1, doctorBean.getDoctorName());
-            ps.setString(2, doctorBean.getSpecialization());
-            ps.setInt(3, doctorBean.getYearsOfExperience());
-            ps.setString(4, doctorBean.getDateOfBirth());
-            ps.setString(5, doctorBean.getDateOfJoining());
-            ps.setString(6, doctorBean.getGender());
-            ps.setString(7, doctorBean.getQualification());
-            ps.setString(8, doctorBean.getStreet());
-            ps.setString(9, doctorBean.getLocation());
-            ps.setString(10, doctorBean.getCity());
-            ps.setString(11, doctorBean.getState());
-            ps.setString(12, doctorBean.getPincode());
-            ps.setString(13, doctorBean.getContactNumber());
-            ps.setString(14, doctorBean.getEmailID());
-            ps.setString(15, doctorBean.getDoctorID());
+        StringBuilder sql = new StringBuilder("UPDATE doctors SET ");
+        int count = 0;
+
+        for (String field : updatedFields.keySet()) {
+            sql.append(field).append("=?");
+            if (++count < updatedFields.size()) sql.append(", ");
+        }
+        sql.append(" WHERE doctorID=?");
+
+        try (Connection con = DBUtil.getDBConnection();
+             PreparedStatement ps = con.prepareStatement(sql.toString())) {
+
+            int index = 1;
+            for (String field : updatedFields.keySet()) {
+                ps.setString(index++, updatedFields.get(field));
+            }
+            ps.setString(index, doctorID);
 
             int rows = ps.executeUpdate();
             return rows > 0;
@@ -74,12 +74,44 @@ public class AdministratorDAO implements Administrator {
         }
     }
 
-    @Override
+
+    // ✅ Dynamic Field Update (for partial modification)
+//    @Override
+//    public Boolean modifyDoctor(String doctorID, Map<String, String> updatedFields) {
+//        if (updatedFields.isEmpty()) return false;
+//
+//        StringBuilder sql = new StringBuilder("UPDATE doctors SET ");
+//        int count = 0;
+//
+//        for (String field : updatedFields.keySet()) {
+//            sql.append(field).append("=?");
+//            if (++count < updatedFields.size()) sql.append(", ");
+//        }
+//        sql.append(" WHERE doctorID=?");
+//
+//        try (Connection con = DBUtil.getDBConnection();
+//             PreparedStatement ps = con.prepareStatement(sql.toString())) {
+//
+//            int index = 1;
+//            for (String field : updatedFields.keySet()) {
+//                ps.setString(index++, updatedFields.get(field));
+//            }
+//            ps.setString(index, doctorID);
+//
+//            int rows = ps.executeUpdate();
+//            return rows > 0;
+//
+//        } catch (SQLException | ClassNotFoundException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
+
     public ArrayList<DoctorBean> viewAllDoctors() {
         ArrayList<DoctorBean> doctorList = new ArrayList<>();
         String sql = "SELECT * FROM doctors";
 
-        try (Connection con = (Connection) DBUtil.getDBConnection();
+        try (Connection con = DBUtil.getDBConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
@@ -109,15 +141,15 @@ public class AdministratorDAO implements Administrator {
         return doctorList;
     }
 
+
     @Override
     public int removeDoctor(String doctorID) {
         String sql = "DELETE FROM doctors WHERE doctorID=?";
-        try (Connection con = (Connection) DBUtil.getDBConnection();
+        try (Connection con = DBUtil.getDBConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, doctorID);
-            int rows = ps.executeUpdate();
-            return rows;
+            return ps.executeUpdate();
 
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
