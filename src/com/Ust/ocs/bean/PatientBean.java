@@ -1,8 +1,13 @@
 package com.Ust.ocs.bean;
 
 public class PatientBean {
+	private String fullName;
+	
     
-    private String patientID;
+    public String getFullName() {
+		return fullName;
+	}
+	private String patientID;
     private String userID;
     private String appointmentDate;  
     private String ailmentType;
@@ -43,6 +48,12 @@ public class PatientBean {
 	}
 	public void setDiagnosisHistory(String diagnosisHistory) {
 		this.diagnosisHistory = diagnosisHistory;
+	}
+	public void setFullName(String fullName) {
+		// TODO Auto-generated method stub
+		this.fullName=fullName;
+		
+		
 	}
 
 
