@@ -215,9 +215,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.Ust.ocs.dao.AdministratorDAO;
 import com.Ust.ocs.bean.CredentialsBean;
 import com.Ust.ocs.bean.DoctorBean;
+import com.Ust.ocs.dao.AdministratorDAO;
 import com.Ust.ocs.util.Authentication;
 
 public class Call {
@@ -275,7 +275,19 @@ public class Call {
 
             if (auth.authenticate(user)) {
                 JOptionPane.showMessageDialog(frame, "Login successful! Welcome, " + user.getUserId() + " (" + user.getUserType() + ")");
-                showAdminMenu();
+                
+                // Check user type and show the corresponding menu
+                if (user.getUserType().equalsIgnoreCase("Admin")) {
+                    showAdminMenu();
+                } else if (user.getUserType().equalsIgnoreCase("Patient")) {
+                    // Launch Patient Menu in a new window
+                    PatientMenu.main(new String[]{});
+                    frame.dispose();  // Close the current login window
+                } else if (user.getUserType().equalsIgnoreCase("Reporter")) {
+                    // Launch Reporter Menu in a new window
+                    ReporterMenu.main(new String[]{});
+                    frame.dispose();  // Close the current login window
+                }
             } else {
                 JOptionPane.showMessageDialog(frame, "❌ Invalid credentials. Please try again.");
             }
@@ -384,7 +396,7 @@ public class Call {
 
     private void modifyDoctor() {
         String doctorID = JOptionPane.showInputDialog("Enter Doctor ID to Modify");
-        Map<String, String> updatedFields = new HashMap<>();
+        HashMap<String, String> updatedFields = new HashMap<>();
 
         String[] fieldOptions = {
                 "doctorName", "specialization", "yearsOfExperience", "dateOfBirth", "dateOfJoining", "gender", "qualification", 
