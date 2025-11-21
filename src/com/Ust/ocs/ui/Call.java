@@ -11,6 +11,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.Ust.ocs.bean.AppointmentBean;
 import com.Ust.ocs.bean.CredentialsBean;
 import com.Ust.ocs.bean.DoctorBean;
 import com.Ust.ocs.bean.ProfileBean;
@@ -106,13 +107,28 @@ public class Call {
 
 
 
-
-
     private void showAdminMenu() {
+        // Create JFrame
         JFrame adminFrame = new JFrame("Admin Menu");
-        adminFrame.setBounds(100, 100, 400, 300);
+        adminFrame.setBounds(100, 100, 600, 500);  // Increased the frame size to 600x500
         adminFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        adminFrame.getContentPane().setLayout(new FlowLayout());
+
+        // Center the frame on the screen
+        adminFrame.setLocationRelativeTo(null);  // This will center the frame
+
+        // Set GridBagLayout for better control over the positioning
+        adminFrame.getContentPane().setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(20, 20, 20, 20);  // Add padding between components
+
+        // Welcome Message at the top
+        JLabel welcomeLabel = new JLabel("Welcome to Admin Panel", JLabel.CENTER);
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));  // Increased font size for welcome message
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;  // Span across both columns
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        adminFrame.getContentPane().add(welcomeLabel, gbc);
 
         // Buttons for different admin functions
         JButton addDoctorBtn = new JButton("Add Doctor");
@@ -121,23 +137,100 @@ public class Call {
         JButton removeDoctorBtn = new JButton("Remove Doctor");
         JButton manageScheduleBtn = new JButton("Manage Doctor Schedule");
         JButton showLeaveReportBtn = new JButton("Show Leave Report");
+        JButton manageAppointmentsBtn = new JButton("Manage Appointments");
+
+        addDoctorBtn.setFont(new Font("Arial", Font.PLAIN, 18));  // Increased button font size
+        modifyDoctorBtn.setFont(new Font("Arial", Font.PLAIN, 18));
+        viewDoctorsBtn.setFont(new Font("Arial", Font.PLAIN, 18));
+        removeDoctorBtn.setFont(new Font("Arial", Font.PLAIN, 18));
+        manageScheduleBtn.setFont(new Font("Arial", Font.PLAIN, 18));
+        showLeaveReportBtn.setFont(new Font("Arial", Font.PLAIN, 18));
+        manageAppointmentsBtn.setFont(new Font("Arial", Font.PLAIN, 18));
 
         addDoctorBtn.addActionListener(e -> addDoctor());
         modifyDoctorBtn.addActionListener(e -> modifyDoctor());
         viewDoctorsBtn.addActionListener(e -> viewDoctors());
         removeDoctorBtn.addActionListener(e -> removeDoctor());
         manageScheduleBtn.addActionListener(e -> manageSchedule());
-        showLeaveReportBtn.addActionListener(e -> showLeaveReport());// New button for schedule management
+        showLeaveReportBtn.addActionListener(e -> showLeaveReport());
+        manageAppointmentsBtn.addActionListener(e -> manageAppointments());  // New button for appointment management
 
-        adminFrame.getContentPane().add(addDoctorBtn);
-        adminFrame.getContentPane().add(modifyDoctorBtn);
-        adminFrame.getContentPane().add(viewDoctorsBtn);
-        adminFrame.getContentPane().add(removeDoctorBtn);
-        adminFrame.getContentPane().add(manageScheduleBtn);
-        adminFrame.getContentPane().add(showLeaveReportBtn);// Add the schedule button
+        // Set GridBagConstraints for buttons (arranging buttons in two columns)
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;  // Reset the span for the next buttons
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        adminFrame.getContentPane().add(addDoctorBtn, gbc);
 
+        gbc.gridx = 1;
+        adminFrame.getContentPane().add(removeDoctorBtn, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        adminFrame.getContentPane().add(viewDoctorsBtn, gbc);
+
+        gbc.gridx = 1;
+        adminFrame.getContentPane().add(modifyDoctorBtn, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        adminFrame.getContentPane().add(manageScheduleBtn, gbc);
+
+        gbc.gridx = 1;
+        adminFrame.getContentPane().add(showLeaveReportBtn, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 2;  // Make this button span both columns
+        adminFrame.getContentPane().add(manageAppointmentsBtn, gbc);
+
+        // Show the frame
         adminFrame.setVisible(true);
     }
+
+
+    
+    private void manageAppointments() {
+        // Fetch pending appointments from the database
+        ArrayList<AppointmentBean> pendingAppointments = new AdministratorDAO().getPendingAppointments();
+        
+        if (pendingAppointments.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No pending appointments.", "No Appointments", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        // Create a list to display the pending appointments
+        StringBuilder appointmentDetails = new StringBuilder();
+        for (AppointmentBean appointment : pendingAppointments) {
+            appointmentDetails.append("Appointment ID: ").append(appointment.getAppointmentID()).append("\n")
+                    .append("Doctor ID: ").append(appointment.getDoctorID()).append("\n")
+                    .append("Patient ID: ").append(appointment.getPatientID()).append("\n")
+                    .append("Date: ").append(appointment.getAppointmentDate()).append("\n")
+                    .append("Time: ").append(appointment.getAppointmentTime()).append("\n\n");
+        }
+
+        // Show the appointments in a dialog
+        JTextArea appointmentTextArea = new JTextArea(appointmentDetails.toString());
+        appointmentTextArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(appointmentTextArea);
+        int option = JOptionPane.showConfirmDialog(null, scrollPane, "Pending Appointments", JOptionPane.OK_CANCEL_OPTION);
+
+        if (option == JOptionPane.OK_OPTION) {
+            String appointmentID = JOptionPane.showInputDialog("Enter Appointment ID to approve/reject:");
+
+            // Ask for approval or rejection
+            int action = JOptionPane.showConfirmDialog(null, "Do you want to approve this appointment?", "Approve Appointment", JOptionPane.YES_NO_OPTION);
+
+            if (action == JOptionPane.YES_OPTION) {
+                boolean result = new AdministratorDAO().approveAppointment(appointmentID);
+                JOptionPane.showMessageDialog(null, result ? "Appointment approved!" : "Failed to approve appointment.");
+            } else if (action == JOptionPane.NO_OPTION) {
+                boolean result = new AdministratorDAO().rejectAppointment(appointmentID);
+                JOptionPane.showMessageDialog(null, result ? "Appointment rejected!" : "Failed to reject appointment.");
+            }
+        }
+    }
+
 
 
     private void addDoctor() {

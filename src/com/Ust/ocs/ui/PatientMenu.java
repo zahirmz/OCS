@@ -233,30 +233,18 @@ public class PatientMenu {
     }
 
     public void checkAppointmentStatus(String patientID) {
-        String query = "SELECT APPOINTMENTID, STATUS FROM appointments WHERE PATIENTID = ? ORDER BY APPOINTMENTID DESC LIMIT 1";
-
-        try (Connection con = DriverManager.getConnection(URL, USER, PASSWORD);
-             PreparedStatement ps = con.prepareStatement(query)) {
-
-            ps.setString(1, patientID);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                String appointmentID = rs.getString("APPOINTMENTID");
-                String status = rs.getString("STATUS");
-
-                if ("approved".equals(status)) {
-                    JOptionPane.showMessageDialog(frame, "Your appointment " + appointmentID + " has been approved.");
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Your appointment " + appointmentID + " is still pending approval.");
-                }
-            } else {
-                JOptionPane.showMessageDialog(frame, "No appointment found for this Patient ID.");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (patientID == null || patientID.isEmpty()) {
+            JOptionPane.showMessageDialog(frame, "Please enter a valid Patient ID.", "Invalid Input", JOptionPane.WARNING_MESSAGE);
+            return;
         }
+
+        // Get the status from the DAO
+        String statusMessage = patientDAO.getAppointmentStatus(patientID);
+
+        // Show the status in a dialog
+        JOptionPane.showMessageDialog(frame, statusMessage, "Appointment Status", JOptionPane.INFORMATION_MESSAGE);
     }
+
     private void viewAppointments() {
         // Ask the patient to enter their ID to view their appointments
         String patientID = JOptionPane.showInputDialog(frame, "Enter your Patient ID:");
@@ -277,7 +265,9 @@ public class PatientMenu {
                 String appointmentInfo = "Appointment ID: " + appointment.getAppointmentID() +
                                          " | Doctor ID: " + appointment.getDoctorID() +
                                          " | Date: " + appointment.getAppointmentDate() +
-                                         " | Time: " + appointment.getAppointmentTime();
+                                         " | Time: " + appointment.getAppointmentTime() +
+                                         " | Status: " + appointment.getStatus();  // Include the status
+
                 appointmentListModel.addElement(appointmentInfo);
             }
 
@@ -289,5 +279,6 @@ public class PatientMenu {
             JOptionPane.showMessageDialog(frame, "Patient ID cannot be empty.", "Invalid Input", JOptionPane.WARNING_MESSAGE);
         }
     }
+
 
 }

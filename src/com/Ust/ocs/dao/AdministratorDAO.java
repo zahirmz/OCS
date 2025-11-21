@@ -264,6 +264,69 @@ public class AdministratorDAO implements Administrator {
         return leaveReports;
     }
 
+    
+ // Method to fetch pending appointments
+    public ArrayList<AppointmentBean> getPendingAppointments() {
+        ArrayList<AppointmentBean> appointmentList = new ArrayList<>();
+        String sql = "SELECT * FROM appointments WHERE STATUS = 'PENDING'";  // Assuming 'PENDING' is the status
+
+        try (Connection con = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                AppointmentBean appointment = new AppointmentBean();
+                appointment.setAppointmentID(rs.getString("APPOINTMENTID"));
+                appointment.setDoctorID(rs.getString("DOCTORID"));
+                appointment.setPatientID(rs.getString("PATIENTID"));
+                appointment.setAppointmentDate(rs.getString("APPOINTMENT_DATE"));
+                appointment.setAppointmentTime(rs.getString("APPOINTMENT_TIME"));
+                appointmentList.add(appointment);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return appointmentList;
+    }
+
+    
+    
+ // Method to approve an appointment
+    public boolean approveAppointment(String appointmentID) {
+        String sql = "UPDATE appointments SET STATUS = 'APPROVED' WHERE APPOINTMENTID = ?";
+
+        try (Connection con = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, appointmentID);
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    
+ // Method to reject an appointment
+    public boolean rejectAppointment(String appointmentID) {
+        String sql = "UPDATE appointments SET STATUS = 'REJECTED' WHERE APPOINTMENTID = ?";
+
+        try (Connection con = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, appointmentID);
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
 
     @Override

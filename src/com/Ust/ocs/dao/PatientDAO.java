@@ -419,6 +419,7 @@ public class PatientDAO implements Patient {
     public ArrayList<AppointmentBean> viewAppointments(String patientId) {
         ArrayList<AppointmentBean> appointmentList = new ArrayList<>();
 
+        // SQL query to fetch appointments
         String query = "SELECT appointmentID, doctorID, appointment_date, appointment_time, status FROM appointments WHERE patientID = ?";
 
         try (Connection con = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -437,7 +438,7 @@ public class PatientDAO implements Patient {
                 appointment.setDoctorID(rs.getString("doctorID"));
                 appointment.setAppointmentDate(rs.getString("appointment_date"));
                 appointment.setAppointmentTime(rs.getString("appointment_time"));
-                appointment.setStatus(rs.getString("status")); // Assuming the status column exists in your table
+                appointment.setStatus(rs.getString("status"));  // Map the status field from the query
 
                 // Add the appointment to the list
                 appointmentList.add(appointment);
@@ -447,8 +448,32 @@ public class PatientDAO implements Patient {
             e.printStackTrace();
         }
 
-        return appointmentList; // Return the list of appointments
+        return appointmentList;  // Return the list of appointments
     }
+
+    public String getAppointmentStatus(String patientID) {
+        String query = "SELECT APPOINTMENTID, STATUS FROM appointments WHERE PATIENTID = ? ORDER BY APPOINTMENTID DESC LIMIT 1";
+        try (Connection con = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement ps = con.prepareStatement(query)) {
+
+            ps.setString(1, patientID);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String appointmentID = rs.getString("APPOINTMENTID");
+                String status = rs.getString("STATUS");
+
+                // Return status
+                return "Your appointment " + appointmentID + " has been " + status + ".";
+            } else {
+                return "No appointment found for this Patient ID.";
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "Error checking appointment status.";
+        }
+    }
+
 
 }
 

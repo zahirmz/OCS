@@ -22,23 +22,37 @@ public class ReporterMenu {
             }
         });
     }
-
-    // Constructor to initialize the frame
     public ReporterMenu() {
         initialize(); // Call initialize method to set up the UI components
     }
 
     private void initialize() {
         frame = new JFrame("Reporter Menu"); // Initialize the frame here
-        frame.setBounds(100, 100, 400, 300);
+        frame.setBounds(100, 100, 600, 500); // Increased frame size for a larger UI
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().setLayout(new FlowLayout());
 
+        // Center the frame on the screen
+        frame.setLocationRelativeTo(null); // This will center the frame
+
+        // Set GridBagLayout for better control over button placement
+        frame.getContentPane().setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(20, 20, 20, 20);  // Add padding between buttons
+
+        // Create buttons for the reporter menu
         JButton reportLeaveBtn = new JButton("Report Leave");
         JButton viewDoctorsBtn = new JButton("View Doctors");
         JButton viewAvailableDoctorsBtn = new JButton("View Available Doctors on Specific Date");
         JButton removeLeaveBtn = new JButton("Remove Leave");
-        JButton viewDoctorsOnLeaveBtn = new JButton("View Doctors on Leave");  // New button to view doctors on leave
+        JButton viewDoctorsOnLeaveBtn = new JButton("View Doctors on Leave");
+
+        // Increase font size for better readability
+        Font buttonFont = new Font("Arial", Font.PLAIN, 18);
+        reportLeaveBtn.setFont(buttonFont);
+        viewDoctorsBtn.setFont(buttonFont);
+        viewAvailableDoctorsBtn.setFont(buttonFont);
+        removeLeaveBtn.setFont(buttonFont);
+        viewDoctorsOnLeaveBtn.setFont(buttonFont);
 
         // Add action listeners for each button
         reportLeaveBtn.addActionListener(e -> reportLeave());
@@ -47,20 +61,29 @@ public class ReporterMenu {
         removeLeaveBtn.addActionListener(e -> removeLeave());
         viewDoctorsOnLeaveBtn.addActionListener(e -> showDoctorsOnLeave());  // Action listener for new button
 
-        // Add buttons to the frame
-        frame.getContentPane().add(reportLeaveBtn);
-        frame.getContentPane().add(viewDoctorsBtn);
-        frame.getContentPane().add(viewAvailableDoctorsBtn);
-        frame.getContentPane().add(removeLeaveBtn);
-        frame.getContentPane().add(viewDoctorsOnLeaveBtn);  // Add the new button for "View Doctors on Leave"
+        // Add buttons to the frame (arrange buttons in two columns)
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        frame.getContentPane().add(reportLeaveBtn, gbc);
 
-        frame.setVisible(true);  // Show the frame
+        gbc.gridx = 1;
+        frame.getContentPane().add(viewDoctorsBtn, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        frame.getContentPane().add(viewAvailableDoctorsBtn, gbc);
+
+        gbc.gridx = 1;
+        frame.getContentPane().add(removeLeaveBtn, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;  // Make the "View Doctors on Leave" button span both columns
+        frame.getContentPane().add(viewDoctorsOnLeaveBtn, gbc);
+
+        // Show the frame
+        frame.setVisible(true);
     }
-
-    // Define your methods here (like reportLeave(), viewAllDoctors(), etc.)
-
-
-
 
 
     private void viewAllDoctors() {

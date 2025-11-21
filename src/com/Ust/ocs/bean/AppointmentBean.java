@@ -6,7 +6,8 @@ public class AppointmentBean {
 	 private String patientID;
 	 private String appointmentDate;  
 	 private String appointmentTime;
-	
+	 private String status;
+	 
 	 public String getAppointmentID() {
 		 return appointmentID;
 	 }
@@ -37,10 +38,14 @@ public class AppointmentBean {
 	 public void setAppointmentTime(String appointmentTime) {
 		 this.appointmentTime = appointmentTime;
 	 }
-	 public void setStatus(String string) {
-		
-		
+	 public String getStatus() {
+		 return status;
 	 }
+	 public void setStatus(String status) {
+		 this.status = status;
+	 }
+	 
+	 
     
 
 }
