@@ -8,19 +8,13 @@ import com.Ust.ocs.bean.DoctorBean;
 import com.Ust.ocs.bean.PatientBean;
 
 public interface Reporter {
-	public String addAilmentDetails(PatientBean patientBean);   
-    
-	    
-	           
-	public boolean modifyAilmentDetails(PatientBean patientBean);
-	      
-	public ArrayList<PatientBean> viewAilmentDetails(String patientID);
-	public ArrayList<DoctorBean> viewListOfDoctors(String specialization, String date) ;
-	      
-	public String requestforAppointment(String doctorID, String appointmentDate);   
-	     
-	      
-	           
-	public Map<AppointmentBean, PatientBean> viewAppointmentDetails(String patientID, String date);
 
+    // Method to fetch all doctors
+    ArrayList<DoctorBean> viewAllDoctors();
+
+    // Method to fetch available doctors on a specific date
+    ArrayList<DoctorBean> viewAvailableDoctors(String date);
+
+    // Method to report doctor's leave
+    boolean reportLeave(String doctorID, String leaveReason);
 }

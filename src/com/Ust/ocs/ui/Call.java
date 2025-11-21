@@ -13,17 +13,16 @@ import java.util.HashMap;
 
 import com.Ust.ocs.bean.CredentialsBean;
 import com.Ust.ocs.bean.DoctorBean;
+import com.Ust.ocs.bean.ProfileBean;
+import com.Ust.ocs.bean.ScheduleBean;
 import com.Ust.ocs.dao.AdministratorDAO;
 import com.Ust.ocs.dao.PatientDAO;
 import com.Ust.ocs.util.Authentication;
 
 public class Call {
     private JFrame frame;
-    private JTextField userText;
-    private JPasswordField passwordField;
-    private JTextField registerUserText;
-    private JPasswordField registerPasswordField;
-    private JTextField registerNameField;
+    private JTextField userText;              // Username field
+    private JPasswordField passwordField;     // Password field
 
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
@@ -47,7 +46,7 @@ public class Call {
         frame.getContentPane().setLayout(null);
 
         // Login Form
-        JLabel lblUsername = new JLabel("Username:");
+        JLabel lblUsername = new JLabel("User ID:");
         lblUsername.setBounds(66, 58, 85, 14);
         frame.getContentPane().add(lblUsername);
 
@@ -73,96 +72,36 @@ public class Call {
         btnRegister.setBounds(161, 185, 89, 23);
         frame.getContentPane().add(btnRegister);
 
-        // Registration Form (Initially hidden)
-        JPanel registerPanel = new JPanel();
-        registerPanel.setBounds(66, 225, 300, 120);
-        registerPanel.setLayout(new GridLayout(4, 2));
-        registerPanel.setVisible(false);
-
-        JLabel lblRegisterName = new JLabel("Full Name:");
-        registerPanel.add(lblRegisterName);
-
-        registerNameField = new JTextField();
-        registerPanel.add(registerNameField);
-
-        JLabel lblRegisterUsername = new JLabel("Username:");
-        registerPanel.add(lblRegisterUsername);
-
-        registerUserText = new JTextField();
-        registerPanel.add(registerUserText);
-
-        JLabel lblRegisterPassword = new JLabel("Password:");
-        registerPanel.add(lblRegisterPassword);
-
-        registerPasswordField = new JPasswordField();
-        registerPanel.add(registerPasswordField);
-
-        JButton btnSubmitRegistration = new JButton("Submit Registration");
-        registerPanel.add(btnSubmitRegistration);
-
-        frame.getContentPane().add(registerPanel);
-
         // Login Action
         btnLogin.addActionListener(e -> {
             String userId = userText.getText();
             String password = new String(passwordField.getPassword());
+
             CredentialsBean user = new CredentialsBean(userId, password, "", 0);
             Authentication auth = new AuthenticationImpl();
 
             if (auth.authenticate(user)) {
                 JOptionPane.showMessageDialog(frame, "Login successful! Welcome, " + user.getUserId() + " (" + user.getUserType() + ")");
-                
-                // After successful login, navigate based on the user type
                 if (user.getUserType().equalsIgnoreCase("Admin")) {
                     showAdminMenu();
                 } else if (user.getUserType().equalsIgnoreCase("Patient")) {
-                    // Launch Patient Menu after login
-                    PatientMenu.main(new String[]{});  // Open the Patient Menu
-                    frame.dispose();  // Close the login window
+                    PatientMenu.main(new String[]{}); 
+                    frame.dispose();
                 } else if (user.getUserType().equalsIgnoreCase("Reporter")) {
-                    // Launch Reporter Menu after login
-                    ReporterMenu.main(new String[]{});  // Open the Reporter Menu
-                    frame.dispose();  // Close the login window
+                    ReporterMenu.main(new String[]{}); 
+                    frame.dispose();
                 }
             } else {
                 JOptionPane.showMessageDialog(frame, "❌ Invalid credentials. Please try again.");
             }
         });
 
-        // Register Button Action
+        // Register Action
         btnRegister.addActionListener(e -> {
-            // Show the registration panel
-            registerPanel.setVisible(true);
-        });
-
-        // Submit Registration Action
-        btnSubmitRegistration.addActionListener(e -> {
-            String newUsername = registerUserText.getText();
-            String newPassword = new String(registerPasswordField.getPassword());
-            String fullName = registerNameField.getText();
-
-            if (registerPatient(newUsername, newPassword, fullName)) {
-                JOptionPane.showMessageDialog(frame, "Registration Successful! Please log in.");
-                registerPanel.setVisible(false); // Hide the registration form
-            } else {
-                JOptionPane.showMessageDialog(frame, "❌ Registration failed. Please try again.");
-            }
+            RegisterForm.main(new String[]{}); // Show registration form
+            frame.dispose();  // Close the login window
         });
     }
-
-    // Method to handle patient registration
-    private boolean registerPatient(String username, String password, String fullName) {
-        // Here you can call the DAO to insert patient details into the database
-        PatientDAO patientDAO = new PatientDAO();
-
-        // Create the CredentialsBean for login details
-        CredentialsBean newCredentials = new CredentialsBean(username, password, "Patient", 0);
-
-        // Call the PatientDAO to insert the new credentials into the database
-        return patientDAO.registerNewPatient(newCredentials);
-    }
-
- 
 
 
 
@@ -175,23 +114,31 @@ public class Call {
         adminFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         adminFrame.getContentPane().setLayout(new FlowLayout());
 
+        // Buttons for different admin functions
         JButton addDoctorBtn = new JButton("Add Doctor");
         JButton modifyDoctorBtn = new JButton("Modify Doctor");
         JButton viewDoctorsBtn = new JButton("View Doctors");
         JButton removeDoctorBtn = new JButton("Remove Doctor");
+        JButton manageScheduleBtn = new JButton("Manage Doctor Schedule");
+        JButton showLeaveReportBtn = new JButton("Show Leave Report");
 
         addDoctorBtn.addActionListener(e -> addDoctor());
         modifyDoctorBtn.addActionListener(e -> modifyDoctor());
         viewDoctorsBtn.addActionListener(e -> viewDoctors());
         removeDoctorBtn.addActionListener(e -> removeDoctor());
+        manageScheduleBtn.addActionListener(e -> manageSchedule());
+        showLeaveReportBtn.addActionListener(e -> showLeaveReport());// New button for schedule management
 
         adminFrame.getContentPane().add(addDoctorBtn);
         adminFrame.getContentPane().add(modifyDoctorBtn);
         adminFrame.getContentPane().add(viewDoctorsBtn);
         adminFrame.getContentPane().add(removeDoctorBtn);
+        adminFrame.getContentPane().add(manageScheduleBtn);
+        adminFrame.getContentPane().add(showLeaveReportBtn);// Add the schedule button
 
         adminFrame.setVisible(true);
     }
+
 
     private void addDoctor() {
         JPanel panel = new JPanel();
@@ -318,5 +265,140 @@ public class Call {
             JOptionPane.showMessageDialog(frame, "❌ Doctor ID not found!");
         }
     }
+    private void addSchedule() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(0, 2));
+
+        JTextField scheduleIDField = new JTextField();
+        JTextField doctorIDField = new JTextField();
+        JTextField availableDaysField = new JTextField();
+        JTextField slotsField = new JTextField();
+
+        panel.add(new JLabel("Schedule ID:"));
+        panel.add(scheduleIDField);
+        panel.add(new JLabel("Doctor ID:"));
+        panel.add(doctorIDField);
+        panel.add(new JLabel("Available Days (e.g. Monday, Wednesday):"));
+        panel.add(availableDaysField);
+        panel.add(new JLabel("Time Slots (e.g. 9:00 AM - 10:00 AM):"));
+        panel.add(slotsField);
+
+        int option = JOptionPane.showConfirmDialog(null, panel, "Enter Schedule Details", JOptionPane.OK_CANCEL_OPTION);
+        if (option == JOptionPane.OK_OPTION) {
+            ScheduleBean schedule = new ScheduleBean();
+            schedule.setScheduleID(scheduleIDField.getText());
+            schedule.setDoctorID(doctorIDField.getText());
+            schedule.setAvailableDays(availableDaysField.getText());
+            schedule.setSlots(slotsField.getText());
+
+            AdministratorDAO adminDAO = new AdministratorDAO();
+            String result = adminDAO.addSchedule(schedule);
+            JOptionPane.showMessageDialog(null, result);
+        }
+    }
+    
+    private void manageSchedule() {
+        String[] options = {"Add Schedule", "Modify Schedule", "Remove Schedule", "View Schedule"};
+        String choice = (String) JOptionPane.showInputDialog(null, "Choose an action:", "Schedule Management",
+                JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+        if (choice != null) {
+            switch (choice) {
+                case "Add Schedule":
+                    addSchedule();  // Function to add schedule
+                    break;
+                case "Modify Schedule":
+                    modifySchedule();  // Function to modify schedule
+                    break;
+                case "Remove Schedule":
+                    removeSchedule();  // Function to remove schedule
+                    break;
+                case "View Schedule":
+                	viewDoctorSchedule();  // Function to view schedules
+                    break;
+            }
+        }
+    }
+    
+    private void modifySchedule() {
+        String scheduleID = JOptionPane.showInputDialog("Enter Schedule ID to Modify");
+        String doctorID = JOptionPane.showInputDialog("Enter Doctor ID");
+
+        // Prompt for the fields to modify
+        String newAvailableDays = JOptionPane.showInputDialog("Enter new Available Days:");
+        String newSlots = JOptionPane.showInputDialog("Enter new Time Slots:");
+
+        ScheduleBean schedule = new ScheduleBean();
+        schedule.setScheduleID(scheduleID);
+        schedule.setDoctorID(doctorID);
+        schedule.setAvailableDays(newAvailableDays);
+        schedule.setSlots(newSlots);
+
+        AdministratorDAO adminDAO = new AdministratorDAO();
+        boolean modified = adminDAO.modifySchedule(schedule);
+        if (modified) {
+            JOptionPane.showMessageDialog(null, "Schedule updated successfully!");
+        } else {
+            JOptionPane.showMessageDialog(null, "❌ Schedule ID or Doctor ID not found!");
+        }
+    }
+
+    private void removeSchedule() {
+        String scheduleID = JOptionPane.showInputDialog("Enter Schedule ID to Remove");
+        String doctorID = JOptionPane.showInputDialog("Enter Doctor ID");
+
+        AdministratorDAO adminDAO = new AdministratorDAO();
+        int result = adminDAO.removeSchedule(scheduleID, doctorID);
+        if (result > 0) {
+            JOptionPane.showMessageDialog(null, "Schedule removed successfully!");
+        } else {
+            JOptionPane.showMessageDialog(null, "❌ Schedule ID or Doctor ID not found!");
+        }
+    }
+
+    private void viewDoctorSchedule() {
+        String doctorID = JOptionPane.showInputDialog("Enter Doctor ID to View Schedule");
+
+        // Call the viewSchedule method to get the doctor's schedule
+        AdministratorDAO adminDAO = new AdministratorDAO();
+        ArrayList<String> scheduleDetails = adminDAO.viewSchedule(doctorID);
+
+        // Display the schedule in a dialog box
+        if (scheduleDetails.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No schedule found for Doctor ID: " + doctorID);
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (String schedule : scheduleDetails) {
+                sb.append(schedule);
+            }
+
+            JTextArea textArea = new JTextArea(sb.toString());
+            JScrollPane scrollPane = new JScrollPane(textArea);
+            JOptionPane.showMessageDialog(null, scrollPane, "Doctor's Schedule", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+    
+    private void showLeaveReport() {
+        // Fetch all leave reports from the DAO
+        AdministratorDAO adminDAO = new AdministratorDAO();
+        ArrayList<String> leaveReports = adminDAO.getLeaveReports();
+
+        // Display the leave reports in a dialog box
+        if (leaveReports.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No leave reports found.");
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (String report : leaveReports) {
+                sb.append(report).append("\n");
+            }
+
+            JTextArea textArea = new JTextArea(sb.toString());
+            JScrollPane scrollPane = new JScrollPane(textArea);
+            JOptionPane.showMessageDialog(null, scrollPane, "Leave Report", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+
+
 }
 

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import com.Ust.ocs.bean.DoctorBean;
 
 public interface Patient {
-	public ArrayList<DoctorBean> viewAllAvailableDoctors(String date);
-	public ArrayList<DoctorBean> intimateAdmin(String date, String status);
-	
+
+	ArrayList<DoctorBean> viewAllAvailableDoctors(String date);
+
 	
 }
