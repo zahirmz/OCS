@@ -20,13 +20,47 @@ public class AdministratorDAO implements Administrator {
     private static final String PASSWORD = "pass@word1";  // Replace with your actual database password
 
     // Other methods and DAO logic go here
+    
+    public String getNextDoctorID() {
+        String query = "SELECT MAX(doctorID) FROM doctors";
+        try (Connection con = DBUtil.getDBConnection();
+             PreparedStatement ps = con.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                String maxDoctorID = rs.getString(1);
+                if (maxDoctorID != null) {
+                    // Extract the number part of the doctorID (e.g., "D001" -> 1)
+                    int idNumber = Integer.parseInt(maxDoctorID.substring(1));
+                    // Increment the number by 1
+                    idNumber++;
+                    // Format the next ID as DXXX
+                    return "D" + String.format("%03d", idNumber); // "D001", "D002", etc.
+                }
+            }
+            // If no doctor IDs exist, start from D001
+            return "D001";
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
     @Override
     public String addDoctor(DoctorBean doctorBean) {
-        String sql = "INSERT INTO doctors VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String doctorID = getNextDoctorID();  // Get the next doctor ID
+
+        if (doctorID == null) {
+            return "⚠️ Error: Unable to generate Doctor ID.";
+        }
+
+        String sql = "INSERT INTO doctors (doctorID, doctorName, dateOfBirth, dateOfJoining, gender, qualification, specialization, yearsOfExperience, street, location, city, state, pincode, contactNumber, emailID) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
         try (Connection con = DBUtil.getDBConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setString(1, doctorBean.getDoctorID());
+            ps.setString(1, doctorID);  // Use the generated doctor ID
             ps.setString(2, doctorBean.getDoctorName());
             ps.setString(3, doctorBean.getDateOfBirth());
             ps.setString(4, doctorBean.getDateOfJoining());
@@ -43,13 +77,14 @@ public class AdministratorDAO implements Administrator {
             ps.setString(15, doctorBean.getEmailID());
 
             int rows = ps.executeUpdate();
-            return rows > 0 ? "✅ Doctor added successfully!" : "❌ Failed to add doctor.";
+            return rows > 0 ? "✅ Doctor added successfully! Doctor ID: " + doctorID : "❌ Failed to add doctor.";
 
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
             return "⚠️ Error: " + e.getMessage();
         }
     }
+
     
     @Override
     public Boolean modifyDoctor(String doctorID, Map<String, String> updatedFields) {

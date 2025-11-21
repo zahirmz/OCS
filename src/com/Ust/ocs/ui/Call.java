@@ -41,39 +41,70 @@ public class Call {
     }
 
     private void initialize() {
-        frame = new JFrame();
-        frame.setBounds(100, 100, 450, 350);
+        frame = new JFrame("Login");
+        frame.setBounds(100, 100, 450, 350);  // Set the initial size of the window
+
+        // Center the window on the screen
+        frame.setLocationRelativeTo(null);  // This will center the frame
+
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(null);
 
-        // Login Form
+        // Set background color for the frame
+        frame.getContentPane().setBackground(new Color(240, 248, 255)); // Light blue background
+
+        // Title label
+        JLabel lblTitle = new JLabel("Welcome to the System");
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
+        lblTitle.setBounds(120, 20, 250, 30);
+        frame.getContentPane().add(lblTitle);
+
+        // User ID Label
         JLabel lblUsername = new JLabel("User ID:");
-        lblUsername.setBounds(66, 58, 85, 14);
+        lblUsername.setFont(new Font("Arial", Font.PLAIN, 14));
+        lblUsername.setBounds(66, 80, 85, 20);
         frame.getContentPane().add(lblUsername);
 
+        // User ID Text Field
         userText = new JTextField();
-        userText.setBounds(161, 55, 130, 20);
+        userText.setFont(new Font("Arial", Font.PLAIN, 14));
+        userText.setBounds(161, 80, 200, 30);
+        userText.setBorder(BorderFactory.createLineBorder(new Color(100, 100, 100), 1));
         frame.getContentPane().add(userText);
-        userText.setColumns(10);
 
+        // Password Label
         JLabel lblPassword = new JLabel("Password:");
-        lblPassword.setBounds(66, 106, 85, 14);
+        lblPassword.setFont(new Font("Arial", Font.PLAIN, 14));
+        lblPassword.setBounds(66, 120, 85, 20);
         frame.getContentPane().add(lblPassword);
 
+        // Password Field
         passwordField = new JPasswordField();
-        passwordField.setBounds(161, 103, 130, 20);
+        passwordField.setFont(new Font("Arial", Font.PLAIN, 14));
+        passwordField.setBounds(161, 120, 200, 30);
+        passwordField.setBorder(BorderFactory.createLineBorder(new Color(100, 100, 100), 1));
         frame.getContentPane().add(passwordField);
 
+        // Login Button
         JButton btnLogin = new JButton("Login");
-        btnLogin.setBounds(161, 151, 89, 23);
-        frame.getContentPane().add(btnLogin);
+        btnLogin.setFont(new Font("Arial", Font.BOLD, 14));
+        btnLogin.setBackground(new Color(56, 128, 255)); // Blue color for button
+        btnLogin.setForeground(Color.WHITE);
+        btnLogin.setBounds(161, 170, 90, 35);
+        btnLogin.setFocusPainted(false);
+        btnLogin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        // Register Button
-        JButton btnRegister = new JButton("Register");
-        btnRegister.setBounds(161, 185, 89, 23);
-        frame.getContentPane().add(btnRegister);
+        // Button Hover Effect
+        btnLogin.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                btnLogin.setBackground(new Color(85, 185, 255)); // Lighter blue
+            }
 
-        // Login Action
+            public void mouseExited(MouseEvent e) {
+                btnLogin.setBackground(new Color(56, 128, 255)); // Original color
+            }
+        });
+
         btnLogin.addActionListener(e -> {
             String userId = userText.getText();
             String password = new String(passwordField.getPassword());
@@ -86,79 +117,105 @@ public class Call {
                 if (user.getUserType().equalsIgnoreCase("Admin")) {
                     showAdminMenu();
                 } else if (user.getUserType().equalsIgnoreCase("Patient")) {
-                    PatientMenu.main(new String[]{}); 
+                    PatientMenu.main(new String[]{});
                     frame.dispose();
                 } else if (user.getUserType().equalsIgnoreCase("Reporter")) {
-                    ReporterMenu.main(new String[]{}); 
+                    ReporterMenu.main(new String[]{});
                     frame.dispose();
                 }
             } else {
                 JOptionPane.showMessageDialog(frame, "❌ Invalid credentials. Please try again.");
             }
         });
+        frame.getContentPane().add(btnLogin);
 
-        // Register Action
-        btnRegister.addActionListener(e -> {
-            RegisterForm.main(new String[]{}); // Show registration form
-            frame.dispose();  // Close the login window
+        // Register Button
+        JButton btnRegister = new JButton("Register");
+        btnRegister.setFont(new Font("Arial", Font.BOLD, 14));
+        btnRegister.setBackground(new Color(34, 193, 195)); // Aqua color for the Register button
+        btnRegister.setForeground(Color.WHITE);
+        btnRegister.setBounds(161, 215, 90, 35);
+        btnRegister.setFocusPainted(false);
+        btnRegister.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        // Register Button Hover Effect
+        btnRegister.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                btnRegister.setBackground(new Color(85, 255, 255)); // Lighter aqua color
+            }
+
+            public void mouseExited(MouseEvent e) {
+                btnRegister.setBackground(new Color(34, 193, 195)); // Original color
+            }
         });
-    }
 
+        btnRegister.addActionListener(e -> {
+            RegisterForm.main(new String[]{});
+            frame.dispose();
+        });
+        frame.getContentPane().add(btnRegister);
+        
+        // Add a logo or an icon at the top (optional)
+        JLabel lblLogo = new JLabel();
+        lblLogo.setIcon(new ImageIcon("path_to_logo.png")); // Optional logo
+        lblLogo.setBounds(180, 10, 100, 50);
+        frame.getContentPane().add(lblLogo);
+
+        // Show the frame
+        frame.setVisible(true);
+    }
 
 
 
     private void showAdminMenu() {
         // Create JFrame
-        JFrame adminFrame = new JFrame("Admin Menu");
-        adminFrame.setBounds(100, 100, 600, 500);  // Increased the frame size to 600x500
+        JFrame adminFrame = new JFrame("Admin Panel");
+        adminFrame.setBounds(100, 100, 600, 500);  // Increased frame size
         adminFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Center the frame on the screen
-        adminFrame.setLocationRelativeTo(null);  // This will center the frame
+        // Center the frame
+        adminFrame.setLocationRelativeTo(null);  // Center the frame on screen
 
-        // Set GridBagLayout for better control over the positioning
+        // Set background color for the panel
+        adminFrame.getContentPane().setBackground(new Color(255, 255, 255));
+
+        // Use GridBagLayout for better control over component placement
         adminFrame.getContentPane().setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(20, 20, 20, 20);  // Add padding between components
 
         // Welcome Message at the top
         JLabel welcomeLabel = new JLabel("Welcome to Admin Panel", JLabel.CENTER);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));  // Increased font size for welcome message
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 30));  // Larger font size for the welcome message
+        welcomeLabel.setForeground(new Color(50, 50, 50));  // Dark gray color for text
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;  // Span across both columns
         gbc.fill = GridBagConstraints.HORIZONTAL;
         adminFrame.getContentPane().add(welcomeLabel, gbc);
 
-        // Buttons for different admin functions
-        JButton addDoctorBtn = new JButton("Add Doctor");
-        JButton modifyDoctorBtn = new JButton("Modify Doctor");
-        JButton viewDoctorsBtn = new JButton("View Doctors");
-        JButton removeDoctorBtn = new JButton("Remove Doctor");
-        JButton manageScheduleBtn = new JButton("Manage Doctor Schedule");
-        JButton showLeaveReportBtn = new JButton("Show Leave Report");
-        JButton manageAppointmentsBtn = new JButton("Manage Appointments");
+        // Define buttons for admin actions
+        JButton addDoctorBtn = createButton("Add Doctor");
+        JButton modifyDoctorBtn = createButton("Modify Doctor");
+        JButton viewDoctorsBtn = createButton("View Doctors");
+        JButton removeDoctorBtn = createButton("Remove Doctor");
+        JButton manageScheduleBtn = createButton("Manage Doctor Schedule");
+        JButton showLeaveReportBtn = createButton("Show Leave Report");
+        JButton manageAppointmentsBtn = createButton("Manage Appointments");
 
-        addDoctorBtn.setFont(new Font("Arial", Font.PLAIN, 18));  // Increased button font size
-        modifyDoctorBtn.setFont(new Font("Arial", Font.PLAIN, 18));
-        viewDoctorsBtn.setFont(new Font("Arial", Font.PLAIN, 18));
-        removeDoctorBtn.setFont(new Font("Arial", Font.PLAIN, 18));
-        manageScheduleBtn.setFont(new Font("Arial", Font.PLAIN, 18));
-        showLeaveReportBtn.setFont(new Font("Arial", Font.PLAIN, 18));
-        manageAppointmentsBtn.setFont(new Font("Arial", Font.PLAIN, 18));
-
+        // Set action listeners
         addDoctorBtn.addActionListener(e -> addDoctor());
         modifyDoctorBtn.addActionListener(e -> modifyDoctor());
         viewDoctorsBtn.addActionListener(e -> viewDoctors());
         removeDoctorBtn.addActionListener(e -> removeDoctor());
         manageScheduleBtn.addActionListener(e -> manageSchedule());
         showLeaveReportBtn.addActionListener(e -> showLeaveReport());
-        manageAppointmentsBtn.addActionListener(e -> manageAppointments());  // New button for appointment management
+        manageAppointmentsBtn.addActionListener(e -> manageAppointments());
 
-        // Set GridBagConstraints for buttons (arranging buttons in two columns)
+        // Set GridBagConstraints for buttons (arrange in two columns)
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.gridwidth = 1;  // Reset the span for the next buttons
+        gbc.gridwidth = 1;  // Reset the span for next buttons
         gbc.fill = GridBagConstraints.HORIZONTAL;
         adminFrame.getContentPane().add(addDoctorBtn, gbc);
 
@@ -188,6 +245,32 @@ public class Call {
         adminFrame.setVisible(true);
     }
 
+    // Helper method to create styled buttons
+    private JButton createButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Arial", Font.PLAIN, 18));
+        button.setBackground(new Color(70, 130, 180));  // SteelBlue color
+        button.setForeground(Color.WHITE);
+        button.setBorder(BorderFactory.createLineBorder(new Color(70, 130, 180), 2));
+        button.setFocusPainted(false);
+        button.setPreferredSize(new Dimension(250, 50));  // Set button size
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));  // Hand cursor on hover
+
+        // Add hover effect for buttons
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setBackground(new Color(100, 149, 237));  // Lighter blue when hovered
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setBackground(new Color(70, 130, 180));  // Back to original color
+            }
+        });
+
+        return button;
+    }
 
     
     private void manageAppointments() {
@@ -237,7 +320,6 @@ public class Call {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(0, 2));
 
-        JTextField doctorIDField = new JTextField();
         JTextField doctorNameField = new JTextField();
         JTextField specializationField = new JTextField();
         JTextField yearsOfExperienceField = new JTextField();
@@ -253,8 +335,6 @@ public class Call {
         JTextField contactNumberField = new JTextField();
         JTextField emailField = new JTextField();
 
-        panel.add(new JLabel("Doctor ID:"));
-        panel.add(doctorIDField);
         panel.add(new JLabel("Doctor Name:"));
         panel.add(doctorNameField);
         panel.add(new JLabel("Specialization:"));
@@ -287,7 +367,6 @@ public class Call {
         int option = JOptionPane.showConfirmDialog(null, panel, "Enter Doctor Details", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
             DoctorBean doctor = new DoctorBean();
-            doctor.setDoctorID(doctorIDField.getText());
             doctor.setDoctorName(doctorNameField.getText());
             doctor.setSpecialization(specializationField.getText());
             doctor.setYearsOfExperience(Integer.parseInt(yearsOfExperienceField.getText()));

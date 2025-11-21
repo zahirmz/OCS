@@ -36,48 +36,50 @@ public class PatientMenu {
         initialize();
     }
 
+
     private void initialize() {
         frame = new JFrame("Patient Menu");
-        frame.setBounds(100, 100, 600, 400);  // Adjusted window size to fit all buttons in three columns
+        frame.setBounds(100, 100, 700, 500); // Adjusted window size for better UI
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().setLayout(new GridBagLayout());  // Use GridBagLayout for better control
+        frame.getContentPane().setLayout(new GridBagLayout()); // Use GridBagLayout for better control
 
         // Create a GridBagConstraints object to control the layout
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);  // Add padding between buttons
+        gbc.insets = new Insets(15, 15, 15, 15);  // Add padding between buttons
         gbc.fill = GridBagConstraints.HORIZONTAL;  // Ensure buttons stretch horizontally
+
+        // Font and color settings
+        Font buttonFont = new Font("Arial", Font.PLAIN, 18);
+        Color buttonColor = new Color(56, 128, 255); // Blue color for buttons
+        Color hoverColor = new Color(85, 185, 255); // Lighter blue for hover effect
+        Color textColor = Color.WHITE;  // White text color
 
         // First Column (View Doctors, View Schedule)
         gbc.gridx = 0; // Column 0
         gbc.gridy = 0;
-        JButton btnViewDoctors = new JButton("View ALL Available Doctors");
-        btnViewDoctors.setPreferredSize(new Dimension(250, 40));  // Set button size
+        JButton btnViewDoctors = createButton("View ALL Available Doctors", buttonFont, buttonColor, textColor, hoverColor);
         btnViewDoctors.addActionListener(e -> viewAvailableDoctors());
         frame.getContentPane().add(btnViewDoctors, gbc);
 
         gbc.gridy = 1;
-        JButton btnViewSchedule = new JButton("View Doctor Schedule");
-        btnViewSchedule.setPreferredSize(new Dimension(250, 40));  // Set button size
+        JButton btnViewSchedule = createButton("View Doctor Schedule", buttonFont, buttonColor, textColor, hoverColor);
         btnViewSchedule.addActionListener(e -> viewDoctorSchedule());
         frame.getContentPane().add(btnViewSchedule, gbc);
 
         // Second Column (Appointments)
         gbc.gridx = 1; // Column 1
         gbc.gridy = 0;
-        JButton btnBookAppointment = new JButton("Book Appointment");
-        btnBookAppointment.setPreferredSize(new Dimension(250, 40));  // Set button size
+        JButton btnBookAppointment = createButton("Book Appointment", buttonFont, buttonColor, textColor, hoverColor);
         btnBookAppointment.addActionListener(e -> bookAppointment());
         frame.getContentPane().add(btnBookAppointment, gbc);
 
         gbc.gridy = 1;
-        JButton btnViewAppointments = new JButton("View Appointments");
-        btnViewAppointments.setPreferredSize(new Dimension(250, 40));  // Set button size
+        JButton btnViewAppointments = createButton("View Appointments", buttonFont, buttonColor, textColor, hoverColor);
         btnViewAppointments.addActionListener(e -> viewAppointments());
         frame.getContentPane().add(btnViewAppointments, gbc);
 
         gbc.gridy = 2;
-        JButton btnCheckStatus = new JButton("Check Appointment Status");
-        btnCheckStatus.setPreferredSize(new Dimension(250, 40));  // Set button size
+        JButton btnCheckStatus = createButton("Check Appointment Status", buttonFont, buttonColor, textColor, hoverColor);
         btnCheckStatus.addActionListener(e -> {
             String patientID = JOptionPane.showInputDialog(frame, "Enter your Patient ID:");
             checkAppointmentStatus(patientID);
@@ -87,24 +89,45 @@ public class PatientMenu {
         // Third Column (Ailment details)
         gbc.gridx = 2; // Column 2
         gbc.gridy = 0;
-        JButton btnAddAilmentDetails = new JButton("Add Ailment Details");
-        btnAddAilmentDetails.setPreferredSize(new Dimension(250, 40));  // Set button size
+        JButton btnAddAilmentDetails = createButton("Add Ailment Details", buttonFont, buttonColor, textColor, hoverColor);
         btnAddAilmentDetails.addActionListener(e -> addAilmentDetails());
         frame.getContentPane().add(btnAddAilmentDetails, gbc);
 
         gbc.gridy = 1;
-        JButton btnModifyAilmentDetails = new JButton("Modify Ailment Details");
-        btnModifyAilmentDetails.setPreferredSize(new Dimension(250, 40));  // Set button size
+        JButton btnModifyAilmentDetails = createButton("Modify Ailment Details", buttonFont, buttonColor, textColor, hoverColor);
         btnModifyAilmentDetails.addActionListener(e -> modifyAilmentDetails());
         frame.getContentPane().add(btnModifyAilmentDetails, gbc);
 
         gbc.gridy = 2;
-        JButton btnViewAilmentDetails = new JButton("View Ailment Details");
-        btnViewAilmentDetails.setPreferredSize(new Dimension(250, 40));  // Set button size
+        JButton btnViewAilmentDetails = createButton("View Ailment Details", buttonFont, buttonColor, textColor, hoverColor);
         btnViewAilmentDetails.addActionListener(e -> viewAilmentDetails());
         frame.getContentPane().add(btnViewAilmentDetails, gbc);
     }
 
+    // Helper method to create buttons with common settings
+    private JButton createButton(String text, Font font, Color bgColor, Color fgColor, Color hoverColor) {
+        JButton button = new JButton(text);
+        button.setFont(font);
+        button.setBackground(bgColor);
+        button.setForeground(fgColor);
+        button.setPreferredSize(new Dimension(250, 50));  // Set button size
+        button.setFocusPainted(false);
+
+        // Add hover effect for the button
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setBackground(hoverColor);  // Change color on hover
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setBackground(bgColor);  // Revert to original color when hover ends
+            }
+        });
+
+        return button;
+    }
 
     private void viewAvailableDoctors() {
         ArrayList<DoctorBean> doctorList = patientDAO.viewAllAvailableDoctors("");

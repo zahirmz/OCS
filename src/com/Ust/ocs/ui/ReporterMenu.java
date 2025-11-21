@@ -10,7 +10,7 @@ import com.Ust.ocs.bean.ScheduleBean;
 import com.Ust.ocs.dao.ReporterDAO;
 
 public class ReporterMenu {
-    private JFrame frame; // Declare frame globally to access it in other methods
+    private JFrame frame;
 
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
@@ -22,67 +22,97 @@ public class ReporterMenu {
             }
         });
     }
+
     public ReporterMenu() {
         initialize(); // Call initialize method to set up the UI components
     }
 
     private void initialize() {
-        frame = new JFrame("Reporter Menu"); // Initialize the frame here
-        frame.setBounds(100, 100, 600, 500); // Increased frame size for a larger UI
+        frame = new JFrame("Reporter Menu");
+        frame.setBounds(100, 100, 600, 500); // Set window size
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Center the frame on the screen
-        frame.setLocationRelativeTo(null); // This will center the frame
+        frame.setLocationRelativeTo(null); // Center window on screen
 
-        // Set GridBagLayout for better control over button placement
+        // Set layout manager (GridBagLayout for better control)
         frame.getContentPane().setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(20, 20, 20, 20);  // Add padding between buttons
+        gbc.insets = new Insets(15, 15, 15, 15); // Add padding between buttons
+
+        // Set background color
+        frame.getContentPane().setBackground(new Color(240, 248, 255)); // Light blue background
+
+        // Title label
+        JLabel titleLabel = new JLabel("Reporter Menu");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setForeground(new Color(0, 102, 204)); // Blue color for title
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        frame.getContentPane().add(titleLabel, gbc);
 
         // Create buttons for the reporter menu
-        JButton reportLeaveBtn = new JButton("Report Leave");
-        JButton viewDoctorsBtn = new JButton("View Doctors");
-        JButton viewAvailableDoctorsBtn = new JButton("View Available Doctors on Specific Date");
-        JButton removeLeaveBtn = new JButton("Remove Leave");
-        JButton viewDoctorsOnLeaveBtn = new JButton("View Doctors on Leave");
-
-        // Increase font size for better readability
-        Font buttonFont = new Font("Arial", Font.PLAIN, 18);
-        reportLeaveBtn.setFont(buttonFont);
-        viewDoctorsBtn.setFont(buttonFont);
-        viewAvailableDoctorsBtn.setFont(buttonFont);
-        removeLeaveBtn.setFont(buttonFont);
-        viewDoctorsOnLeaveBtn.setFont(buttonFont);
+        JButton reportLeaveBtn = createButton("Report Leave");
+        JButton viewDoctorsBtn = createButton("View Doctors");
+        JButton viewAvailableDoctorsBtn = createButton("View Available Doctors on Specific Date");
+        JButton removeLeaveBtn = createButton("Remove Leave");
+        JButton viewDoctorsOnLeaveBtn = createButton("View Doctors who Reported Leave");
 
         // Add action listeners for each button
         reportLeaveBtn.addActionListener(e -> reportLeave());
         viewDoctorsBtn.addActionListener(e -> viewAllDoctors());
         viewAvailableDoctorsBtn.addActionListener(e -> viewAvailableDoctors());
         removeLeaveBtn.addActionListener(e -> removeLeave());
-        viewDoctorsOnLeaveBtn.addActionListener(e -> showDoctorsOnLeave());  // Action listener for new button
+        viewDoctorsOnLeaveBtn.addActionListener(e -> showDoctorsOnLeave());
 
         // Add buttons to the frame (arrange buttons in two columns)
         gbc.gridx = 0;
-        gbc.gridy = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
         frame.getContentPane().add(reportLeaveBtn, gbc);
 
         gbc.gridx = 1;
         frame.getContentPane().add(viewDoctorsBtn, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         frame.getContentPane().add(viewAvailableDoctorsBtn, gbc);
 
         gbc.gridx = 1;
         frame.getContentPane().add(removeLeaveBtn, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.gridwidth = 2;  // Make the "View Doctors on Leave" button span both columns
         frame.getContentPane().add(viewDoctorsOnLeaveBtn, gbc);
 
         // Show the frame
         frame.setVisible(true);
+    }
+
+    // Method to create a button with a consistent look
+    private JButton createButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Arial", Font.PLAIN, 18));
+        button.setBackground(new Color(70, 130, 180)); // Steel blue background color
+        button.setForeground(Color.WHITE); // White text color
+        button.setFocusPainted(false); // Remove focus outline
+        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20)); // Add padding inside button
+        button.setPreferredSize(new Dimension(250, 50)); // Set button size
+
+        // Add hover effect (change button color on hover)
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(100, 149, 237)); // Change color on hover
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(70, 130, 180)); // Restore original color
+            }
+        });
+
+        return button;
     }
 
 
@@ -130,14 +160,13 @@ public class ReporterMenu {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        JTextField leaveIDField = new JTextField();
+        // Declare only the necessary fields
         JTextField doctorIDField = new JTextField();
         JTextField leaveReasonField = new JTextField();
         JTextField leaveFromField = new JTextField();
         JTextField leaveToField = new JTextField();
 
-        panel.add(new JLabel("Enter Leave ID:"));
-        panel.add(leaveIDField);
+        // Add labels and text fields to the panel
         panel.add(new JLabel("Enter Doctor ID:"));
         panel.add(doctorIDField);
         panel.add(new JLabel("Enter Leave Reason:"));
@@ -147,16 +176,16 @@ public class ReporterMenu {
         panel.add(new JLabel("Enter Leave End Date (YYYY-MM-DD):"));
         panel.add(leaveToField);
 
+        // Prompt user to fill in all fields
         int option = JOptionPane.showConfirmDialog(frame, panel, "Report Doctor's Leave", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
         if (option == JOptionPane.OK_OPTION) {
-            String leaveID = leaveIDField.getText().trim();
             String doctorID = doctorIDField.getText().trim();
             String leaveReason = leaveReasonField.getText().trim();
             String leaveFrom = leaveFromField.getText().trim();
             String leaveTo = leaveToField.getText().trim();
 
-            if (!leaveID.isEmpty() && !doctorID.isEmpty() && !leaveReason.isEmpty() && !leaveFrom.isEmpty() && !leaveTo.isEmpty()) {
+            if (!doctorID.isEmpty() && !leaveReason.isEmpty() && !leaveFrom.isEmpty() && !leaveTo.isEmpty()) {
                 try {
                     Date startDate = Date.valueOf(leaveFrom);
                     Date endDate = Date.valueOf(leaveTo);
@@ -169,7 +198,7 @@ public class ReporterMenu {
 
                     // Now we call the updated DAO method that inserts into the leaves table
                     ReporterDAO reporterDAO = new ReporterDAO();
-                    boolean success = reporterDAO.reportLeave(leaveID, doctorID, leaveReason, startDate, endDate, 1);  // status = 1 (Has appointments)
+                    boolean success = reporterDAO.reportLeave("", doctorID, leaveReason, startDate, endDate, 1);  // leaveID will be generated automatically
 
                     if (success) {
                         JOptionPane.showMessageDialog(frame, "Leave report submitted for Doctor ID: " + doctorID + "\nReason: " + leaveReason);
@@ -185,6 +214,7 @@ public class ReporterMenu {
             }
         }
     }
+
 
 
     private void removeLeave() {
@@ -217,6 +247,9 @@ public class ReporterMenu {
         }
 
         JTextArea textArea = new JTextArea(sb.toString());
+        textArea.setEditable(false); // Make the text area non-editable
+        textArea.setFont(new Font("Arial", Font.PLAIN, 14));  // Change font for better readability
+        textArea.setBackground(new Color(240, 248, 255));  // Light background for the text area
         JScrollPane scrollPane = new JScrollPane(textArea);
         JOptionPane.showMessageDialog(frame, scrollPane, "Doctors on Leave", JOptionPane.INFORMATION_MESSAGE);
     }

@@ -41,27 +41,34 @@ public class ReporterDAO {
 
     // Method to report doctor's leave
     public boolean reportLeave(String leaveID, String doctorID, String leaveReason, Date leaveFrom, Date leaveTo, int status) {
+        // Fetch the latest LEAVEID from the database
+        String latestLeaveID = getLatestLeaveID();
+
+        // If no records are found, start with L001
+        if (latestLeaveID == null) {
+            leaveID = "L001";
+        } else {
+            // Extract the numeric part of the ID and increment it
+            String numericPart = latestLeaveID.substring(1);  // Remove 'L' from 'Lxxx'
+            int nextLeaveIDNum = Integer.parseInt(numericPart) + 1;  // Increment the number
+            leaveID = "L" + String.format("%03d", nextLeaveIDNum);  // Format as Lxxx (e.g., L009)
+        }
+
         String query = "INSERT INTO leaves (LEAVEID, DOCTORID, LEAVE_FROM, LEAVE_TO, REASON, STATUS) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection con = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement ps = con.prepareStatement(query)) {
 
-            // Log the query and parameters
-            System.out.println("Executing query: " + query);
-            System.out.println("With parameters: " + leaveID + ", " + doctorID + ", " + leaveFrom + ", " + leaveTo + ", " + leaveReason + ", " + status);
-
             // Set parameters for the SQL query
-            ps.setString(1, leaveID);           // LEAVEID
-            ps.setString(2, doctorID);          // DOCTORID
-            ps.setDate(3, leaveFrom);           // LEAVE_FROM
-            ps.setDate(4, leaveTo);             // LEAVE_TO
-            ps.setString(5, leaveReason);      // REASON
-            ps.setInt(6, status);              // STATUS
+            ps.setString(1, leaveID);          // LEAVEID
+            ps.setString(2, doctorID);         // DOCTORID
+            ps.setDate(3, leaveFrom);          // LEAVE_FROM
+            ps.setDate(4, leaveTo);            // LEAVE_TO
+            ps.setString(5, leaveReason);     // REASON
+            ps.setInt(6, status);             // STATUS
 
             // Execute the update query
             int rowsInserted = ps.executeUpdate();
-            System.out.println("Rows inserted: " + rowsInserted);
-
             return rowsInserted > 0;  // Return true if insertion was successful
 
         } catch (SQLException e) {
@@ -69,6 +76,26 @@ public class ReporterDAO {
             return false;  // Return false if an error occurs
         }
     }
+
+    private String getLatestLeaveID() {
+        String query = "SELECT LEAVEID FROM leaves ORDER BY LEAVEID DESC LIMIT 1";  // Get the latest LEAVEID
+
+        try (Connection con = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement ps = con.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getString("LEAVEID");
+            } else {
+                return null;  // No leaves exist yet, so start from L001
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();  // Handle SQL exception
+            return null;
+        }
+    }
+
     public ArrayList<DoctorBean> viewAvailableDoctors(String date) {
         ArrayList<DoctorBean> availableDoctors = new ArrayList<>();
         
@@ -131,7 +158,7 @@ public class ReporterDAO {
         ArrayList<String> doctorsOnLeave = new ArrayList<>();
         
         // SQL query to join doctors and leaves tables to get the doctor details and leave details
-        String query = "SELECT d.doctorID, d.doctorName, d.specialization, l.leave_From, l.leave_To, l.reason " +
+        String query = "SELECT l.leaveID, d.doctorID, d.doctorName, d.specialization, l.leave_From, l.leave_To, l.reason " +
                        "FROM doctors d " +
                        "JOIN leaves l ON d.doctorID = l.doctorID " +
                        "WHERE l.status = 1";  // Status = 1 means doctor is on leave
@@ -142,7 +169,9 @@ public class ReporterDAO {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                String doctorInfo = "Doctor ID: " + rs.getString("doctorID") + "\n" +
+                // Adding leaveID to the doctor info string
+                String doctorInfo = "Leave ID: " + rs.getString("leaveID") + "\n" +  // Display the leave ID
+                                    "Doctor ID: " + rs.getString("doctorID") + "\n" +
                                     "Name: " + rs.getString("doctorName") + "\n" +
                                     "Specialization: " + rs.getString("specialization") + "\n" +
                                     "Leave From: " + rs.getDate("leave_From") + "\n" +
